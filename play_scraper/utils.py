@@ -142,6 +142,8 @@ def parse_additional_info(soup):
     # identical, so we get the values with a similar function.
     section_titles_divs = [x for x in soup.select("div.hAyfc div.BgcNfc")]
 
+
+
     title_normalization = {
         "Updated": "updated",
         "Size": "size",
@@ -248,6 +250,17 @@ def parse_app_details(soup):
         c.attrs["href"].split("/")[-1] for c in soup.select('a[itemprop="genre"]')
     ]
 
+    # Contains Ads
+
+    try:
+        ca_string = str(soup.select_one("div.bSIuKf").text)
+        if "Contains" in ca_string:
+            contains_ads = True
+        else:
+            contains_ads = None
+    except:
+        contains_ads = None
+
     # Let the user handle modifying the URL to fetch different resolutions
     # Removing the end `=w720-h310-rw` doesn't seem to give original res?
     # Check 'src' and 'data-src' since it can be one or the other
@@ -327,6 +340,7 @@ def parse_app_details(soup):
     data = {
         "title": title,
         "icon": icon,
+        "contains_ads": contains_ads,
         "screenshots": screenshots,
         "video": video,
         "category": category,

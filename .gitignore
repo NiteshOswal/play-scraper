@@ -1,6 +1,8 @@
 .DS_Store
 *.pyc
 .tox
+.ipynb_checkpoints/
+env/*
 
 build
 dist
