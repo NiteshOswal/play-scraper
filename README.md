@@ -7,7 +7,10 @@ Scrapes and parses application data from the Google Play Store.
 Install with pip.
 
 ```
-pip install play-scraper
+virtualenv env
+source env/bin/activate
+cd ..
+pip install -e play-scraper
 ```
 
 ### Usage
@@ -58,6 +61,7 @@ Options:
     'recent_changes': u"Thanks for choosing Chrome! You can now find your saved passwords more easily \u2013 just tap the new Search icon in Settings > Passwords. We've also included stability and performance improvements.",
     'required_android_version': 'Varies with device',
     'reviews': 9289408,
+    'contains_ads': None,
     'score': '4.3',
     'screenshots': [ 'https://lh3.googleusercontent.com/lKPDNfsO2QhJD9i77rGDTiH5ILjXlXwPsRi194hhkY4BsbaXbpCFrdjWvcU1zttUwqXz=w720-h310-rw', ...],
     'size': 'Varies with device',
