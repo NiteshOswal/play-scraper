@@ -293,7 +293,7 @@ def parse_app_details(soup):
     histogram = {}
     try:
         reviews = int(
-            soup.select_one('span[aria-label$="ratings"]').text.replace(",", "")
+            soup.select_one('span[aria-label$="ratings"]').text.replace(",", "").replace(u"\xa0", "")
         )
         ratings_section = soup.select_one("div.VEF2C")
         num_ratings = [
