@@ -13,7 +13,8 @@ import requests
 from bs4 import BeautifulSoup
 from requests_futures.sessions import FuturesSession
 
-from play_scraper import settings as s, constants as const
+from play_scraper import settings as s, i18n
+import json
 
 log = logging.getLogger(__name__)
 
@@ -131,7 +132,7 @@ def send_request(
     return response
 
 
-def parse_additional_info(soup):
+def parse_additional_info(soup, language="en"):
     """Parses an app's additional information section on its detail page.
 
     :param soup: the additional_info section BeautifulSoup object
@@ -141,22 +142,7 @@ def parse_additional_info(soup):
     # distinguishing selectors available; each section's markup is nearly
     # identical, so we get the values with a similar function.
     section_titles_divs = [x for x in soup.select("div.hAyfc div.BgcNfc")]
-
-
-
-    title_normalization = {
-        "Updated": "updated",
-        "Size": "size",
-        "Installs": "installs",
-        "Current Version": "current_version",
-        "Requires Android": "required_android_version",
-        "Content Rating": "content_rating",
-        "In-app Products": "iap_range",
-        "Interactive Elements": "interactive_elements",
-        "Offered By": "developer",
-        "Developer": "developer_info",
-    }
-
+    title_normalization = i18n.get_title_normalization_messages(language)
     data = {
         "updated": None,
         "size": None,
@@ -255,9 +241,9 @@ def parse_app_details(soup):
     contains_ads = False
     contains_ad_container = soup.select_one("div.bSIuKf")
     if contains_ad_container:
-        match_text = 'Contains Ads'
-        if language in const.CONTAINS_ADS_LANGUAGE_CODES:
-            match_text = const.CONTAINS_ADS_LANGUAGE_CODES[language]
+        match_text = i18n.CONTAINS_ADS_MESSAGES["en"]
+        if language in i18n.CONTAINS_ADS_MESSAGES:
+            match_text = i18n.CONTAINS_ADS_MESSAGES[language]
         if match_text in str(contains_ad_container.text):
             contains_ads = True
 
@@ -327,7 +313,7 @@ def parse_app_details(soup):
 
     free = price == "0"
 
-    additional_info_data = parse_additional_info(soup.select_one(".IxB2fe"))
+    additional_info_data = parse_additional_info(soup.select_one(".IxB2fe"), language=language)
 
     offers_iap = bool(additional_info_data.get("iap_range"))
 
