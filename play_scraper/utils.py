@@ -13,7 +13,7 @@ import requests
 from bs4 import BeautifulSoup
 from requests_futures.sessions import FuturesSession
 
-from play_scraper import settings as s
+from play_scraper import settings as s, constants as const
 
 log = logging.getLogger(__name__)
 
@@ -241,6 +241,7 @@ def parse_app_details(soup):
     :param soup: a strained BeautifulSoup object of an app
     :return: a dictionary of app details
     """
+    language = soup.select_one("html").attrs["lang"]
     title = soup.select_one('h1[itemprop="name"] span').text
     icon = soup.select_one('img[class="T75of sHb2Xb"]').attrs["src"].split("=")[0]
     editors_choice = bool(soup.select_one('meta[itemprop="editorsChoiceBadgeUrl"]'))
@@ -250,16 +251,15 @@ def parse_app_details(soup):
         c.attrs["href"].split("/")[-1] for c in soup.select('a[itemprop="genre"]')
     ]
 
-    # Contains Ads
-
-    try:
-        ca_string = str(soup.select_one("div.bSIuKf").text)
-        if "Contains" in ca_string:
+    # check if app contains ads
+    contains_ads = False
+    contains_ad_container = soup.select_one("div.bSIuKf")
+    if contains_ad_container:
+        match_text = 'Contains Ads'
+        if language in const.CONTAINS_ADS_LANGUAGE_CODES:
+            match_text = const.CONTAINS_ADS_LANGUAGE_CODES[language]
+        if match_text in str(contains_ad_container.text):
             contains_ads = True
-        else:
-            contains_ads = None
-    except:
-        contains_ads = None
 
     # Let the user handle modifying the URL to fetch different resolutions
     # Removing the end `=w720-h310-rw` doesn't seem to give original res?
