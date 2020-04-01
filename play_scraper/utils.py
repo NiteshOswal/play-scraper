@@ -27,6 +27,10 @@ def default_headers():
     }
 
 
+def clean_titles(title):
+    return re.sub('\\xa0', ' ', re.sub('[(\\u200d)(\\u200c)]', '', title))
+
+
 def generate_post_data(results=None, page=None, pagtok=None, children=0):
     """
     Creates the post data for a POST request. Mainly for pagination and
@@ -157,9 +161,8 @@ def parse_additional_info(soup, language="en"):
         "developer_url": None,
         "developer_address": None,
     }
-
     for title_div in section_titles_divs:
-        section_title = title_div.string
+        section_title = clean_titles(title_div.string)
         if section_title in title_normalization:
             title_key = title_normalization[section_title]
             value_div = title_div.next_sibling.select_one("span.htlgb")
