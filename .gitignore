@@ -3,7 +3,9 @@
 .tox
 .ipynb_checkpoints/
 env/*
-
 build
 dist
 play_scraper.egg-info
+venv/
+.idea/
+._.*

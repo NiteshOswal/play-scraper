@@ -13,7 +13,8 @@ import requests
 from bs4 import BeautifulSoup
 from requests_futures.sessions import FuturesSession
 
-from play_scraper import settings as s
+from play_scraper import settings as s, i18n
+import json
 
 log = logging.getLogger(__name__)
 
@@ -24,6 +25,10 @@ def default_headers():
         "User-Agent": s.USER_AGENT,
         "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
     }
+
+
+def clean_titles(title):
+    return re.sub('\\xa0', ' ', re.sub('[(\\u200d)(\\u200c)]', '', title))
 
 
 def generate_post_data(results=None, page=None, pagtok=None, children=0):
@@ -131,7 +136,7 @@ def send_request(
     return response
 
 
-def parse_additional_info(soup):
+def parse_additional_info(soup, language="en"):
     """Parses an app's additional information section on its detail page.
 
     :param soup: the additional_info section BeautifulSoup object
@@ -141,22 +146,7 @@ def parse_additional_info(soup):
     # distinguishing selectors available; each section's markup is nearly
     # identical, so we get the values with a similar function.
     section_titles_divs = [x for x in soup.select("div.hAyfc div.BgcNfc")]
-
-
-
-    title_normalization = {
-        "Updated": "updated",
-        "Size": "size",
-        "Installs": "installs",
-        "Current Version": "current_version",
-        "Requires Android": "required_android_version",
-        "Content Rating": "content_rating",
-        "In-app Products": "iap_range",
-        "Interactive Elements": "interactive_elements",
-        "Offered By": "developer",
-        "Developer": "developer_info",
-    }
-
+    title_normalization = i18n.get_title_normalization_messages(language)
     data = {
         "updated": None,
         "size": None,
@@ -171,9 +161,8 @@ def parse_additional_info(soup):
         "developer_url": None,
         "developer_address": None,
     }
-
     for title_div in section_titles_divs:
-        section_title = title_div.string
+        section_title = clean_titles(title_div.string)
         if section_title in title_normalization:
             title_key = title_normalization[section_title]
             value_div = title_div.next_sibling.select_one("span.htlgb")
@@ -241,6 +230,7 @@ def parse_app_details(soup):
     :param soup: a strained BeautifulSoup object of an app
     :return: a dictionary of app details
     """
+    language = soup.select_one("html").attrs["lang"]
     title = soup.select_one('h1[itemprop="name"] span').text
     icon = soup.select_one('img[class="T75of sHb2Xb"]').attrs["src"].split("=")[0]
     editors_choice = bool(soup.select_one('meta[itemprop="editorsChoiceBadgeUrl"]'))
@@ -250,16 +240,15 @@ def parse_app_details(soup):
         c.attrs["href"].split("/")[-1] for c in soup.select('a[itemprop="genre"]')
     ]
 
-    # Contains Ads
-
-    try:
-        ca_string = str(soup.select_one("div.bSIuKf").text)
-        if "Contains" in ca_string:
+    # check if app contains ads
+    contains_ads = False
+    contains_ad_container = soup.select_one("div.bSIuKf")
+    if contains_ad_container:
+        match_text = i18n.CONTAINS_ADS_MESSAGES["en"]
+        if language in i18n.CONTAINS_ADS_MESSAGES:
+            match_text = i18n.CONTAINS_ADS_MESSAGES[language]
+        if match_text in str(contains_ad_container.text):
             contains_ads = True
-        else:
-            contains_ads = None
-    except:
-        contains_ads = None
 
     # Let the user handle modifying the URL to fetch different resolutions
     # Removing the end `=w720-h310-rw` doesn't seem to give original res?
@@ -293,7 +282,7 @@ def parse_app_details(soup):
     histogram = {}
     try:
         reviews = int(
-            soup.select_one('span[aria-label$="ratings"]').text.replace(",", "")
+            soup.select_one('span[aria-label$="ratings"]').text.replace(",", "").replace(u"\xa0", "")
         )
         ratings_section = soup.select_one("div.VEF2C")
         num_ratings = [
@@ -327,7 +316,7 @@ def parse_app_details(soup):
 
     free = price == "0"
 
-    additional_info_data = parse_additional_info(soup.select_one(".IxB2fe"))
+    additional_info_data = parse_additional_info(soup.select_one(".IxB2fe"), language=language)
 
     offers_iap = bool(additional_info_data.get("iap_range"))
 
