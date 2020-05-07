@@ -1,7 +1,7 @@
 CONTAINS_ADS_MESSAGES = {
     "af": "Bevat advertensies",
     "sq": "Contains Ads",
-    "en": "Contains ads",
+    "en": "Contains Ads",
     "ar": "تتضمن إعلانات",
     "az": "Contains Ads",
     "eu": "Contains Ads",
