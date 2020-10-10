@@ -155,13 +155,14 @@ class PlayScraper(object):
 
         return apps
 
-    def developer(self, developer, results=None, page=None, detailed=False):
-        """Sends a POST request and retrieves a list of the developer's
+    def developer(self, developer, detailed=False):
+        """Sends a GET request and retrieves 20 of the developer's
         published applications on the Play Store.
 
+        Why 20? This is a limitation because play store has deprecated POST requests
+        and there is no way to setup page variable anymore
+
         :param developer: developer name to retrieve apps from, e.g. 'Disney'
-        :param results: the number of app results to retrieve
-        :param page: the page number to retrieve
         :param detailed: if True, sends request per app for its full detail
         :return: a list of app dictionaries
         """
@@ -169,26 +170,14 @@ class PlayScraper(object):
             raise ValueError(
                 "Parameter 'developer' must be the developer name, not the developer id."
             )
-
-        results = s.DEV_RESULTS if results is None else results
-        page = 0 if page is None else page
-        page_num = (results // 20) * page
-        if not 0 <= page_num <= 12:
-            raise ValueError(
-                "Page out of range. (results // 20) * page must be between 0 - 12"
-            )
-        pagtok = self._pagtok[page_num]
-
         url = build_url("developer", developer)
-        data = generate_post_data(results, 0, pagtok)
-        response = send_request("POST", url, data, self.params)
-
+        response = send_request("GET", url, params=self.params)
         if detailed:
             apps = self._parse_multiple_apps(response)
         else:
             soup = BeautifulSoup(response.content, "lxml", from_encoding="utf8")
             apps = [
-                parse_card_info(app) for app in soup.select('div[data-uitype="500"]')
+                parse_cluster_card_info(app) for app in soup.select("div.Vpfmgd")
             ]
 
         return apps
