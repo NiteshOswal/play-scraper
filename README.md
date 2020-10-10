@@ -17,7 +17,7 @@ pip install -e play-scraper
 
 * [details](#details): Fetch an application's details
 * [collection](#collection): Fetch a list of applications and their details.
-* [developer](#developer): Fetch a developer's offered applications.
+* [developer](#developer): Fetch a developer's 20 offered applications.
 * [suggestions](#suggestions): Fetch a list of query string suggestions.
 * [search](#search): Fetch applications matching a search query.
 * [similar](#similar): Fetch an application's similar apps.
@@ -121,13 +121,11 @@ Options:
 
 #### developer
 
-Fetch a developer's offered applications.
+Fetch a developer's 20 offered applications.
 
 Options:
 
 * `developer` the developer name to fetch applications, e.g. `Disney`. (Case sensitive)
-* `results` (default 24, max 120) the number of apps to fetch. (Developer may have more or less published apps)
-* `page` (default 0) the page number to fetch. Limit: `0 < (results // 20) * page < 12`
 * `detailed` (default False) if True, sends a request per app to fetch the full details as in [details](#details).
 * `hl` (default `en` for English) the [language code](https://github.com/danieliu/play-scraper/blob/master/play_scraper/constants.py#L1) to receive results in a specific language
     * Note: non-default will result in certain fields as `None` due to the way an app's additional info section HTML is displayed
@@ -135,7 +133,7 @@ Options:
 
 ```python
 >>> import play_scraper
->>> print(play_scraper.developer('Disney', results=5))
+>>> print(play_scraper.developer('Disney'))
 [ { 'app_id': 'com.disney.datg.videoplatforms.android.watchdc',
     'description': 'Disney Channel, Disney XD & Disney Junior\u2019s new home for shows, games & live TV!',
     'developer': 'Disney',
