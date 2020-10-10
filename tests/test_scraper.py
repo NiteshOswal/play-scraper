@@ -278,31 +278,24 @@ class DeveloperTest(ScraperTestBase):
 
     def test_maximum_results(self):
         # Google LLC has more than 120 apps
-        apps = self.s.developer("Google LLC", results=120)
+        apps = self.s.developer("Google LLC")
 
-        self.assertGreaterEqual(len(apps), 100)
-        self.assertTrue(all(key in apps[0] for key in BASIC_KEYS))
-        self.assertEqual(len(BASIC_KEYS), len(apps[0].keys()))
-
-    def test_over_max_results_fetches_five(self):
-        apps = self.s.developer("Google LLC", results=121)
-
-        self.assertEqual(5, len(apps))
+        self.assertGreaterEqual(len(apps), 20)
         self.assertTrue(all(key in apps[0] for key in BASIC_KEYS))
         self.assertEqual(len(BASIC_KEYS), len(apps[0].keys()))
 
     def test_fetch_developer_apps_detailed(self):
-        apps = self.s.developer("Disney", results=3, detailed=True)
+        apps = self.s.developer("Disney", detailed=True)
 
-        self.assertEqual(3, len(apps))
+        self.assertEqual(20, len(apps))
         self.assertTrue(all(key in apps[0] for key in DETAIL_KEYS))
         self.assertEqual(len(DETAIL_KEYS), len(apps[0].keys()))
 
     def test_different_language_and_country(self):
         s = PlayScraper(hl="da", gl="dk")
-        apps = s.developer("Google LLC", results=5)
+        apps = s.developer("Google LLC")
 
-        self.assertEqual(5, len(apps))
+        self.assertEqual(20, len(apps))
         self.assertTrue(all(key in apps[0] for key in BASIC_KEYS))
         self.assertEqual(len(BASIC_KEYS), len(apps[0].keys()))
 
@@ -337,10 +330,6 @@ class DeveloperTest(ScraperTestBase):
             "Parameter 'developer' must be the developer name, not the developer id.",
             str(e.exception),
         )
-
-    def test_page_out_of_range(self):
-        with self.assertRaises(ValueError):
-            self.s.developer("Google LLC", results=20, page=13)
 
 
 class SuggestionTest(ScraperTestBase):
