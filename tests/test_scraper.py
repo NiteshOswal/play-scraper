@@ -56,6 +56,7 @@ DETAIL_KEYS = {
     "updated",
     "url",
     "video",
+    "contains_ads"
 }
 
 ADDITIONAL_INFO_KEYS = {
@@ -156,11 +157,11 @@ class DetailsTest(ScraperTestBase):
         self.assertTrue(all([app_data[x] is None for x in ADDITIONAL_INFO_KEYS]))
 
     def test_app_with_no_developer(self):
-        app_data = self.s.details("org.selfie.beauty.camera.pro")
+        app_data = self.s.details("com.google.android.googlequicksearchbox")
 
         self.assertTrue(all(key in app_data for key in DETAIL_KEYS))
         self.assertEqual(len(DETAIL_KEYS), len(app_data.keys()))
-        self.assertEqual("org.selfie.beauty.camera.pro", app_data["app_id"])
+        self.assertEqual("com.google.android.googlequicksearchbox", app_data["app_id"])
         self.assertIsNone(app_data["developer_id"])
         self.assertTrue(
             app_data["screenshots"]

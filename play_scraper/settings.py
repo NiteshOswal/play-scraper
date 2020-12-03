@@ -15,7 +15,7 @@ USER_AGENT = (
 NUM_RESULTS = 60
 
 # Number of results to retrieve from a developer
-DEV_RESULTS = 24
+DEV_RESULTS = 20
 
 # Number of results to retrieve from similar. Range (1 - 60)
 SIMILAR_RESULTS = 24
