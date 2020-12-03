@@ -546,5 +546,5 @@ def multi_futures_app_request(
                     app=app_ids[i], err=str(e)
                 )
             )
-
+    session.close()
     return apps
