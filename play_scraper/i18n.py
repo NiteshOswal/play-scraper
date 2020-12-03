@@ -159,7 +159,7 @@ def get_title_normalization_messages(language):
         message[1]: "size",
         message[2]: "installs",
         message[3]: "current_version",
-        message[4]: "requires_android_version",
+        message[4]: "required_android_version",
         message[5]: "content_rating",
         message[6]: "interactive_elements",
         message[7]: "iap_range",
