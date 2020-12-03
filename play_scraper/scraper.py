@@ -176,9 +176,7 @@ class PlayScraper(object):
             apps = self._parse_multiple_apps(response)
         else:
             soup = BeautifulSoup(response.content, "lxml", from_encoding="utf8")
-            apps = [
-                parse_cluster_card_info(app) for app in soup.select("div.Vpfmgd")
-            ]
+            apps = [parse_cluster_card_info(app) for app in soup.select("div.Vpfmgd")]
 
         return apps
 
