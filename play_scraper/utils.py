@@ -28,7 +28,7 @@ def default_headers():
 
 
 def clean_titles(title):
-    return re.sub('\\xa0', ' ', re.sub('[(\\u200d)(\\u200c)]', '', title))
+    return re.sub("\\xa0", " ", re.sub("[(\\u200d)(\\u200c)]", "", title))
 
 
 def generate_post_data(results=None, page=None, pagtok=None, children=0):
@@ -282,7 +282,9 @@ def parse_app_details(soup):
     histogram = {}
     try:
         reviews = int(
-            soup.select_one('span[aria-label$="ratings"]').text.replace(",", "").replace(u"\xa0", "")
+            soup.select_one('span[aria-label$="ratings"]')
+            .text.replace(",", "")
+            .replace(u"\xa0", "")
         )
         ratings_section = soup.select_one("div.VEF2C")
         num_ratings = [
@@ -316,7 +318,9 @@ def parse_app_details(soup):
 
     free = price == "0"
 
-    additional_info_data = parse_additional_info(soup.select_one(".IxB2fe"), language=language)
+    additional_info_data = parse_additional_info(
+        soup.select_one(".IxB2fe"), language=language
+    )
 
     offers_iap = bool(additional_info_data.get("iap_range"))
 

@@ -56,7 +56,7 @@ DETAIL_KEYS = {
     "updated",
     "url",
     "video",
-    "contains_ads"
+    "contains_ads",
 }
 
 ADDITIONAL_INFO_KEYS = {
