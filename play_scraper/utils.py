@@ -298,7 +298,7 @@ def parse_app_details(soup):
 
     try:
 
-        changes_soup = soup.select('div[itemprop="description"] content')[1]
+        changes_soup = soup.select('div[itemprop="description"] span')[1]
         recent_changes = "\n".join(
             [x.string.strip() if x.string is not None else "" for x in changes_soup]
         )
