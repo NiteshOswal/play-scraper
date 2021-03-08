@@ -368,10 +368,11 @@ def extract_id_query(url):
     absolute_url = url
     if not absolute_url.startswith("https"):
         absolute_url = urljoin(s.BASE_URL, url)
-
     query_string = urlparse(absolute_url).query
-    app_id = parse_qs(query_string).get("id")[0]
-    return app_id
+    id_value = parse_qs(query_string).get("id")
+    if id_value:
+        return id_value[0]
+    return None
 
 
 def parse_cluster_card_info(soup):
