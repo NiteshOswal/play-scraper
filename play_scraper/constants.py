@@ -178,7 +178,6 @@ GL_COUNTRY_CODES = {
     "gu": "Guam",
     "gw": "Guinea-Bissau",
     "gy": "Guyana",
-    "gz": "Gaza Strip",
     "hk": "Hong Kong",
     "hm": "Heard Island and McDonald Islands",
     "hn": "Honduras",
